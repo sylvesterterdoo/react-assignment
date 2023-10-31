@@ -21,26 +21,35 @@ function MyTown() {
   const [weatherMain, setWeatherMain] = useState(null);
   const [weatherDesc, setWeatherDesc] = useState(null);
   const [mainTemp, setMainTemp] = useState(null);
+  const [mainFahrenhietTemp, setMainFahrenhietTemp] = useState(null);
+  const [isCelsius, setIsCelsius] = useState(true);
 
   const CONVERSTION_FACTOR = 273.15;
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
+        // fetch data from the weather api
         const response = await fetch(API_URL);
         if (!response.ok) throw Error("Did not receive expected data");
         const weatherData = await response.json();
         const mainTemperator = weatherData["main"].temp;
-        // console.log(weatherData);
+
+        // convert temperature from kelvin to celsius and fahrenheit
         const celsiusMainTemp = parseFloat(
           convertKelvinTempToCelsius(mainTemperator)
         ).toFixed(2);
 
+        const fahrenheitTemp = parseFloat(
+          convertCelsiusToFahreheit(celsiusMainTemp)
+        ).toFixed(2);
+
+        // set values to be displayed
         setWeatherMain(weatherData["weather"][0].main);
         setWeatherDesc(weatherData["weather"][0].description);
         setMainTemp(celsiusMainTemp);
+        setMainFahrenhietTemp(fahrenheitTemp);
         setTempImage(getTemperatureImage(celsiusMainTemp));
-
         setFetchError(null);
       } catch (err) {
         console.log(err.stack);
@@ -57,6 +66,10 @@ function MyTown() {
     return kelvinTemperature - CONVERSTION_FACTOR;
   };
 
+  const convertCelsiusToFahreheit = (celsiusTemperature) => {
+    return celsiusTemperature * (9 / 5) + 32;
+  };
+
   const getTemperatureImage = (celsiusTemperature) => {
     if (celsiusTemperature <= 10) {
       return cold;
@@ -66,10 +79,6 @@ function MyTown() {
       return sunny;
     }
   };
-  // console.log(`Weather Main ${weatherMain}`);
-  // console.log(`Weather Desc ${weatherDesc}`);
-  // console.log(`Main Temperator ${celsiusMainTemp}`);
-
   return (
     <div>
       {isLoading && <p>Loading Items...</p>}
@@ -80,7 +89,18 @@ function MyTown() {
             <img id="homeTown" src={grazCity} alt="The city of Graz" />
             <figcaption>I live in Graz, Austria.</figcaption>
           </figure>
-          <p>Current weather in Graz: {mainTemp}&deg; celsius.</p>
+          {isCelsius && (
+            <p>
+              Current temperature in Graz:
+              <strong>{mainTemp}&deg; </strong> Celsius.
+            </p>
+          )}
+          {!isCelsius && (
+            <p>
+              Current temperature in Graz:
+              <strong> {mainFahrenhietTemp}&deg; </strong>Fahrenheit.
+            </p>
+          )}
           <ul>
             <li>Weather: {weatherMain} </li>
             <li>Weather Description: {weatherDesc} </li>
@@ -89,6 +109,17 @@ function MyTown() {
             <img id="weatherInTown" src={tempImage} alt="Weather in Graz" />
             <figcaption>Weather in Graz, Austria.</figcaption>
           </figure>
+          <div>
+            <button
+              type="submit"
+              arial-label="Convert temperature"
+              onClick={() => {
+                setIsCelsius(!isCelsius);
+              }}
+            >
+              {isCelsius ? <p>Change to &deg;F</p> : <p>Change to &deg;C</p>}
+            </button>
+          </div>
         </div>
       )}
     </div>
