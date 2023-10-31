@@ -24,10 +24,6 @@ function MyTown() {
 
   const CONVERSTION_FACTOR = 273.15;
 
-  // const weatherMain = weatherData["weather"][0].main;
-  // const weatherDesc = weatherData["weather"][0].description;
-  // const mainTemp = weatherData["main"].temp;
-
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -35,9 +31,7 @@ function MyTown() {
         if (!response.ok) throw Error("Did not receive expected data");
         const weatherData = await response.json();
         const mainTemperator = weatherData["main"].temp;
-        console.log(weatherData);
-        // setWeatherData(listItems);
-
+        // console.log(weatherData);
         const celsiusMainTemp = parseFloat(
           convertKelvinTempToCelsius(mainTemperator)
         ).toFixed(2);
@@ -55,9 +49,8 @@ function MyTown() {
         setIsLoading(false);
       }
     };
-    setTimeout(() => {
-      fetchItems();
-    }, 2000);
+
+    fetchItems();
   }, []);
 
   const convertKelvinTempToCelsius = (kelvinTemperature) => {
@@ -81,21 +74,23 @@ function MyTown() {
     <div>
       {isLoading && <p>Loading Items...</p>}
       {fetchError && <p style={{ color: "red" }}>{`Error: ${fetchError}`}</p>}
-
-      <figure>
-        <img id="homeTown" src={grazCity} alt="The city of Graz" />
-        <figcaption>I live in Graz, Austria.</figcaption>
-      </figure>
-      <p>Current weather in Graz: {mainTemp}&deg; celsius.</p>
-      <ul>
-        <li>Weather: {weatherMain} </li>
-        <li>Weather Description: {weatherDesc} </li>
-      </ul>
-      <figure>
-        <img id="weatherInTown" src={tempImage} alt="Weather in Graz" />
-        <figcaption>Weather in Graz, Austria.</figcaption>
-      </figure>
-      {/* <p>{JSON.stringify(weather)}</p> */}
+      {!fetchError && !isLoading && (
+        <div>
+          <figure>
+            <img id="homeTown" src={grazCity} alt="The city of Graz" />
+            <figcaption>I live in Graz, Austria.</figcaption>
+          </figure>
+          <p>Current weather in Graz: {mainTemp}&deg; celsius.</p>
+          <ul>
+            <li>Weather: {weatherMain} </li>
+            <li>Weather Description: {weatherDesc} </li>
+          </ul>
+          <figure>
+            <img id="weatherInTown" src={tempImage} alt="Weather in Graz" />
+            <figcaption>Weather in Graz, Austria.</figcaption>
+          </figure>
+        </div>
+      )}
     </div>
   );
 }
