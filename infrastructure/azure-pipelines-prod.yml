@@ -1,5 +1,5 @@
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
@@ -20,3 +20,6 @@ steps:
     PathtoPublish: 'build'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+
+
+
