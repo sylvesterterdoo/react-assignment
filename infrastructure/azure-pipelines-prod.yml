@@ -1,5 +1,5 @@
 trigger:
-  - main
+  - prod
 
 pool:
   vmImage: ubuntu-latest
